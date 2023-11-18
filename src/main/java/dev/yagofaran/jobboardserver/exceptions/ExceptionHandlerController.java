@@ -33,4 +33,11 @@ public class ExceptionHandlerController {
 
         return new ResponseEntity<>(dto, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(UserFoundException.class)
+    public ResponseEntity<ErrorMessageDTO> handleUserFoundException(UserFoundException e) {
+        var error = new ErrorMessageDTO(e.getMessage(), "user");
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
 }
