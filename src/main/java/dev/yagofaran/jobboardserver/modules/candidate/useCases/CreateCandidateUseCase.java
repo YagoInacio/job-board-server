@@ -1,6 +1,6 @@
 package dev.yagofaran.jobboardserver.modules.candidate.useCases;
 
-import dev.yagofaran.jobboardserver.exceptions.UserFoundException;
+import dev.yagofaran.jobboardserver.exceptions.AppException;
 import dev.yagofaran.jobboardserver.modules.candidate.entities.CandidateEntity;
 import dev.yagofaran.jobboardserver.modules.candidate.repositories.CandidateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ public class CreateCandidateUseCase {
         this.candidateRepository
                 .findByUsernameOrEmail(candidateEntity.getUsername(), candidateEntity.getEmail())
                 .ifPresent((user) -> {
-                    throw new UserFoundException();
+                    throw new AppException("User already exists");
                 });
 
         return this.candidateRepository.save(candidateEntity);

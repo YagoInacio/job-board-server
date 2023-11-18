@@ -1,6 +1,6 @@
 package dev.yagofaran.jobboardserver.modules.company.useCases;
 
-import dev.yagofaran.jobboardserver.exceptions.UserFoundException;
+import dev.yagofaran.jobboardserver.exceptions.AppException;
 import dev.yagofaran.jobboardserver.modules.company.entities.CompanyEntity;
 import dev.yagofaran.jobboardserver.modules.company.repositories.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ public class CreateCompanyUseCase {
         this.companyRepository
             .findByUsernameOrEmail(companyEntity.getUsername(), companyEntity.getEmail())
             .ifPresent((company) -> {
-                throw new UserFoundException();
+                throw new AppException("User already exists");
             });
 
         return this.companyRepository.save(companyEntity);
