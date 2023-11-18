@@ -4,6 +4,7 @@ import dev.yagofaran.jobboardserver.modules.candidate.entities.CandidateEntity;
 import dev.yagofaran.jobboardserver.modules.candidate.useCases.CreateCandidateUseCase;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +17,9 @@ public class CandidateController {
     private CreateCandidateUseCase createCandidateUseCase;
 
     @PostMapping
-    public CandidateEntity create(@Valid @RequestBody CandidateEntity candidateEntity) {
-        return this.createCandidateUseCase.execute(candidateEntity);
+    public ResponseEntity<CandidateEntity> create(@Valid @RequestBody CandidateEntity candidateEntity) {
+        var result =  this.createCandidateUseCase.execute(candidateEntity);
+
+        return ResponseEntity.status(201).body(result);
     }
 }
