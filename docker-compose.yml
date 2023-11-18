@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  postgres:
+    container_name: job-board-db
+    image: postgres
+    ports:
+      - 5432:5432
+    env_file:
+      - ./db.env.properties
