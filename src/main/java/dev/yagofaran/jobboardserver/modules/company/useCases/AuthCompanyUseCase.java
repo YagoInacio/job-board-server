@@ -3,7 +3,8 @@ package dev.yagofaran.jobboardserver.modules.company.useCases;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import dev.yagofaran.jobboardserver.exceptions.AppException;
-import dev.yagofaran.jobboardserver.modules.company.dto.AuthCompanyDTO;
+import dev.yagofaran.jobboardserver.modules.company.dto.AuthCompanyRequestDTO;
+import dev.yagofaran.jobboardserver.modules.company.dto.AuthCompanyResponseDTO;
 import dev.yagofaran.jobboardserver.modules.company.repositories.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,22 +26,30 @@ public class AuthCompanyUseCase {
     private PasswordEncoder passwordEncoder;
 
 
-    public String execute(AuthCompanyDTO authCompanyDTO) throws AuthenticationException {
-        var company = this.companyRepository.findByUsername(authCompanyDTO.getUsername())
-                .orElseThrow(() -> {
-                    return new AppException("username/password incorrect");
-                });
+    public AuthCompanyResponseDTO execute(AuthCompanyRequestDTO authCompanyRequestDTO) throws AuthenticationException {
+        var company = this.companyRepository
+            .findByUsername(authCompanyRequestDTO.username())
+            .orElseThrow(() -> {
+                return new AppException("username/password incorrect");
+            });
 
-        var passwordMatches = this.passwordEncoder.matches(authCompanyDTO.getPassword(), company.getPassword());
+        var passwordMatches = this.passwordEncoder
+            .matches(authCompanyRequestDTO.password(), company.getPassword());
 
         if (!passwordMatches) {
             throw new AuthenticationException();
         }
 
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
-        return JWT.create().withIssuer("yagofaran")
-                .withExpiresAt(Instant.now().plus(Duration.ofHours(2)))
+        var expiresIn = Instant.now().plus(Duration.ofHours(2));
+        var token =  JWT.create().withIssuer("yagofaran")
+                .withExpiresAt(expiresIn)
                 .withSubject(company.getId().toString())
                 .sign(algorithm);
+
+        return AuthCompanyResponseDTO.builder()
+                .accessToken(token)
+                .expiresIn(expiresIn.toEpochMilli())
+                .build();
     }
 }

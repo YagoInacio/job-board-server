@@ -1,6 +1,6 @@
 package dev.yagofaran.jobboardserver.modules.company.controllers;
 
-import dev.yagofaran.jobboardserver.modules.company.dto.AuthCompanyDTO;
+import dev.yagofaran.jobboardserver.modules.company.dto.AuthCompanyRequestDTO;
 import dev.yagofaran.jobboardserver.modules.company.useCases.AuthCompanyUseCase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.naming.AuthenticationException;
-
 @RestController
 @RequestMapping("auth")
 public class AuthCompanyController {
@@ -19,9 +17,9 @@ public class AuthCompanyController {
     private AuthCompanyUseCase authCompanyUseCase;
 
     @PostMapping("company")
-    public ResponseEntity<Object> create(@RequestBody AuthCompanyDTO authCompanyDTO) {
+    public ResponseEntity<Object> create(@RequestBody AuthCompanyRequestDTO authCompanyRequestDTO) {
         try {
-            var result = this.authCompanyUseCase.execute(authCompanyDTO);
+            var result = this.authCompanyUseCase.execute(authCompanyRequestDTO);
 
             return ResponseEntity.ok(result);
         } catch (Exception e) {
