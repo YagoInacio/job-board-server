@@ -45,7 +45,7 @@ public class AuthCandidateUseCase {
         var token = JWT.create().withIssuer("yagofaran")
                 .withExpiresAt(expiresIn)
                 .withSubject(candidate.getId().toString())
-                .withClaim("roles", Arrays.asList("candidate"))
+                .withClaim("roles", Arrays.asList("CANDIDATE"))
                 .sign(algorithm);
 
         return AuthCandidateResponseDTO.builder()
