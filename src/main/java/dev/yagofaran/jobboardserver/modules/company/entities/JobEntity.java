@@ -1,5 +1,6 @@
 package dev.yagofaran.jobboardserver.modules.company.entities;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -21,8 +22,11 @@ public class JobEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Schema(example = "Web Back-End Developer")
     private String description;
+    @Schema(example = "Junior")
     private String level;
+    @Schema(example = "Health Insurance, Gympass")
     private String benefits;
 
     @ManyToOne()

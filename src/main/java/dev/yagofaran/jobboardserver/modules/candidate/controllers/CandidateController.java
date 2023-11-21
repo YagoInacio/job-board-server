@@ -43,6 +43,18 @@ public class CandidateController {
 
     @GetMapping
     @PreAuthorize("hasRole('CANDIDATE')")
+    @Tag(name = "Candidate", description = "Candidate info")
+    @Operation(
+            summary = "Candidate's profile",
+            description = "Returns the candidate's profile"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = {
+                    @Content(schema = @Schema(implementation = ProfileCandidateResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "User not found")
+    })
+    @SecurityRequirement(name = "jwt_auth")
     public ResponseEntity<ProfileCandidateResponseDTO> profile(HttpServletRequest request) {
         var candidateId = request.getAttribute("candidateId");
 
