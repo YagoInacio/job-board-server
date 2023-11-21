@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.naming.AuthenticationException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
 
 @Service
 public class AuthCompanyUseCase {
@@ -45,6 +46,7 @@ public class AuthCompanyUseCase {
         var token =  JWT.create().withIssuer("yagofaran")
                 .withExpiresAt(expiresIn)
                 .withSubject(company.getId().toString())
+                .withClaim("roles", Arrays.asList("COMPANY"))
                 .sign(algorithm);
 
         return AuthCompanyResponseDTO.builder()
