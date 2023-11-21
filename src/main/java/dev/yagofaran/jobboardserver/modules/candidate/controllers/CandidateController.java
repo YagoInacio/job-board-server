@@ -26,6 +26,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("candidates")
+@Tag(name = "Candidate", description = "Candidate info")
 public class CandidateController {
     @Autowired
     private CreateCandidateUseCase createCandidateUseCase;
@@ -35,6 +36,18 @@ public class CandidateController {
     private ListJobsByFilterUseCase listJobsByFilterUseCase;
 
     @PostMapping
+    @Operation(
+            summary = "Candidate creation",
+            description = "Creates a new candidate"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = {
+                    @Content(schema = @Schema(implementation = CandidateEntity.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "User already exists",
+                    content = @Content(schema = @Schema(implementation = Void.class))
+            )
+    })
     public ResponseEntity<CandidateEntity> create(@Valid @RequestBody CandidateEntity candidateEntity) {
         var result = this.createCandidateUseCase.execute(candidateEntity);
 
@@ -43,7 +56,6 @@ public class CandidateController {
 
     @GetMapping
     @PreAuthorize("hasRole('CANDIDATE')")
-    @Tag(name = "Candidate", description = "Candidate info")
     @Operation(
             summary = "Candidate's profile",
             description = "Returns the candidate's profile"
@@ -52,7 +64,9 @@ public class CandidateController {
             @ApiResponse(responseCode = "200", content = {
                     @Content(schema = @Schema(implementation = ProfileCandidateResponseDTO.class))
             }),
-            @ApiResponse(responseCode = "400", description = "User not found")
+            @ApiResponse(responseCode = "400", description = "User not found",
+                    content = @Content(schema = @Schema(implementation = Void.class))
+            )
     })
     @SecurityRequirement(name = "jwt_auth")
     public ResponseEntity<ProfileCandidateResponseDTO> profile(HttpServletRequest request) {
@@ -65,9 +79,8 @@ public class CandidateController {
 
     @GetMapping("/jobs")
     @PreAuthorize("hasRole('CANDIDATE')")
-    @Tag(name = "Candidate", description = "Candidate info")
     @Operation(
-        summary = "available job list for candidates",
+        summary = "Available job list for candidates",
         description = "Lists all available jobs, based on filter"
     )
     @ApiResponses({
