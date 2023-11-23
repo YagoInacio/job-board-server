@@ -23,6 +23,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.UUID;
 
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -69,5 +70,22 @@ public class CreateJobControllerTest {
         ).andExpect(MockMvcResultMatchers.status().isCreated());
 
         System.out.println(result);
+    }
+
+    @Test
+    public void shouldNotBeAbleToCreateNewJobIfCompanyNotFound() throws Exception {
+        var content = CreateJobDTO.builder()
+                .description("DESCRIPTION TEST")
+                .benefits("BENEFITS TEST")
+                .level("LEVEL TEST")
+                .build();
+
+        mvc.perform(MockMvcRequestBuilders
+            .post("/companies/jobs")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(TestUtils.objectToJson(content))
+            .header("Authorization", TestUtils.generateToken(UUID.randomUUID(), secretKey))
+        ).andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Company not found"));
     }
 }
