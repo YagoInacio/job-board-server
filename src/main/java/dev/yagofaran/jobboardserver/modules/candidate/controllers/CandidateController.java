@@ -1,7 +1,9 @@
 package dev.yagofaran.jobboardserver.modules.candidate.controllers;
 
 import dev.yagofaran.jobboardserver.modules.candidate.dto.ProfileCandidateResponseDTO;
+import dev.yagofaran.jobboardserver.modules.candidate.entities.ApplyJobEntity;
 import dev.yagofaran.jobboardserver.modules.candidate.entities.CandidateEntity;
+import dev.yagofaran.jobboardserver.modules.candidate.useCases.ApplyJobCandidateUseCase;
 import dev.yagofaran.jobboardserver.modules.candidate.useCases.CreateCandidateUseCase;
 import dev.yagofaran.jobboardserver.modules.candidate.useCases.ListJobsByFilterUseCase;
 import dev.yagofaran.jobboardserver.modules.candidate.useCases.ProfileCandidateUseCase;
@@ -34,6 +36,8 @@ public class CandidateController {
     private ProfileCandidateUseCase profileCandidateUseCase;
     @Autowired
     private ListJobsByFilterUseCase listJobsByFilterUseCase;
+    @Autowired
+    private ApplyJobCandidateUseCase applyJobCandidateUseCase;
 
     @PostMapping
     @Operation(
@@ -91,6 +95,22 @@ public class CandidateController {
     @SecurityRequirement(name = "jwt_auth")
     public ResponseEntity<List<JobEntity>> listJobsByFilter(@RequestParam String filter) {
         var result = this.listJobsByFilterUseCase.execute(filter);
+
+        return ResponseEntity.status(200).body(result);
+    }
+
+    @PostMapping("/jobs/apply")
+    @PreAuthorize("hasRole('CANDIDATE')")
+    @Operation(
+            summary = "Candidate's job application",
+            description = "Allows a candidate to apply for a job"
+    )
+    @SecurityRequirement(name = "jwt_auth")
+    public ResponseEntity<ApplyJobEntity> applyJob(HttpServletRequest request, @RequestBody UUID jobId) {
+        var candidateId = request.getAttribute("candidateId");
+
+        var result = this.applyJobCandidateUseCase
+            .execute(UUID.fromString(candidateId.toString()), jobId);
 
         return ResponseEntity.status(200).body(result);
     }
