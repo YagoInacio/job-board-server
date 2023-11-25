@@ -45,7 +45,7 @@ public class CandidateController {
             description = "Creates a new candidate"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", content = {
+            @ApiResponse(responseCode = "201", content = {
                     @Content(schema = @Schema(implementation = CandidateEntity.class))
             }),
             @ApiResponse(responseCode = "400", description = "User already exists",
@@ -105,6 +105,14 @@ public class CandidateController {
             summary = "Candidate's job application",
             description = "Allows a candidate to apply for a job"
     )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = {
+                    @Content(schema = @Schema(implementation = ApplyJobEntity.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "Candidate or job not found",
+                    content = @Content(schema = @Schema(implementation = Void.class))
+            )
+    })
     @SecurityRequirement(name = "jwt_auth")
     public ResponseEntity<ApplyJobEntity> applyJob(HttpServletRequest request, @RequestBody UUID jobId) {
         var candidateId = request.getAttribute("candidateId");
