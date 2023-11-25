@@ -15,7 +15,7 @@ public class SwaggerConfig {
             .info(
                 new Info()
                     .title("Job Board")
-                    .description("Job board manager API")
+                    .description("This API simplifies the interaction between companies and candidates, enabling organizations to display job positions and efficiently handle applicant profiles. Candidates can easily register within the system, sharing detailed information, including descriptions and CVs, and apply for positions with ease.")
                     .version("1")
             )
             .schemaRequirement("jwt_auth", createSecurityScheme());
